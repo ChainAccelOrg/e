@@ -28,13 +28,10 @@ I implemented a gaussian curve in a contract when I made a new financial derivat
 
 # RUNNINNG THE TESTS
 
-    source venv/bin/activate
-
-or make your own environment with 
-
     pip3 install -r requirements.txt
+    source venv/bin/activate
 
 Then,
 
-cd sandbox && brownie test -s
+    cd sandbox && brownie test -s
 
