@@ -7,14 +7,6 @@
 | Reviewer    | Alex Roan       |
 | Commit Hash | `e652e60`       |
 
-- [x] Read `README.md`
-- [x] Check package versions against known security advisories
-- [x] Get familiar with repo layout & directories structure, looking for anything non-standard
-- [x] Create a notes markdown file
-- [x] Make comments on code quality, tests, scripts (if to be used for deployment), naming conventions, function visibilities, custom errors, events
-- [x] Ask about architectural decisions
-- [x] Lean toward security over-optimization (which usually means readability) but also look to reduce loops and other glaring gas-inefficiencies
-
 # Feedback
 
 ## Questions
@@ -49,7 +41,7 @@ I've created a `README_cyfrin.md` with details.
 
 ## Security
 
-1. Use github dependabots to update packages in `requirements.txt`, and only use dependencies that you need. This repo only needs:
+1. Use [GitHub Dependabot](https://github.com/dependabot) to update packages in `requirements.txt`, and only use dependencies that you need. This repo only needs:
 ```bash
 numpy==1.24.2
 ```
@@ -69,16 +61,16 @@ to
 def change_owner(new_owner: address):
 ```
 2. Add [natspec](https://docs.vyperlang.org/en/stable/natspec.html#example) to functions and contracts to explain their functionality to users. 
-3. Variables in vyper are `private` by default. You don't need to use the [keyword private](https://github.com/SamReeves/e/blob/e652e60c52413012aef5692ad18c7acb952739b0/sandbox/contracts/pi.vy#L13)
+3. Variables in Vyper are `private` by default. You don't need to use the [keyword private](https://github.com/SamReeves/e/blob/e652e60c52413012aef5692ad18c7acb952739b0/sandbox/contracts/pi.vy#L13)
 4. [Never import `*`](https://github.com/SamReeves/e/blob/e652e60c52413012aef5692ad18c7acb952739b0/sandbox/tests/e_test.py#L2), you want to import exactly the modules you'll be working with 
-5. Whenever you send a transaction in `brownie`, it's best practice to `wait` for it to finish, otherwise you'll run into errors like `brownie.exceptions.RPCRequestError: Web3 is not connected.`
+5. Whenever you send a transaction in `brownie`, it's best practice to `wait` for it to finish, otherwise, you'll run into errors like `brownie.exceptions.RPCRequestError: Web3 is not connected.`
 6. When creating loops, it's best practice to use an `_` if the variable in the loop isn't used. ie:
 ```python
 for _ in range(100):
 ```
 7. Remove `print` statements from tests
 8. Use `brownie.reverts` instead of `pytest.reverts`. `pytest.reverts` is deprecated. 
-9. Don't use "magic numbers". A "magic number" is a number without any explaination of what it is, for example:
+9. Don't use "magic numbers". A "magic number" is a number without any explanation of what it is, for example:
 ```python 
 TAB: constant(decimal[9][5]) = [[3.1415926536]]
 ```
@@ -100,13 +92,13 @@ def tau_to_the(_x: decimal) -> decimal:
 ```python
 def _tau_to_the(_x: decimal) -> decimal:
 ```
-12. Consider using the [Fixed](https://eth-brownie.readthedocs.io/en/stable/api-convert.html?highlight=fixed168x10#fixed) package for `decimal` inputs to vyper contracts. 
+12. Consider using the [Fixed](https://eth-brownie.readthedocs.io/en/stable/api-convert.html?highlight=fixed168x10#fixed) package for `decimal` inputs to Vyper contracts.
 
 ## Opinionated Code Quality
 
-The following is my opinions on how to format code.
+The following are my opinionated suggestions on code formatting.
 
-1. I prefer this ordering of layout of code:
+1. I prefer this ordering:
 
 ```
 // version
@@ -128,7 +120,7 @@ The following is my opinions on how to format code.
 // view & pure functions
 ```
 
-2. Have storage variables start with `s_`, immutables with `i_`, and constants all caps uppercase. ie:
+2. Have storage variables start with `s_`, immutables with `i_`, and constants all uppercase. ie:
 ```python
 s_owner: address
 ```
