@@ -3,14 +3,16 @@
 @title e^x
 @license MIT
 @author magic numbers
+@notice add an about section here
 """
-owner: public(address)
+s_owner: address
 event lookup:
     sender: address
     x: decimal
     y: decimal
 
-tab: constant(decimal[10][11]) = [[1.0, 2.7182818285, 7.3890560989, 20.0855369232, 54.5981500331, 148.4131591026, 403.4287934927, 1096.6331584285, 2980.9579870417, 8103.0839275754],
+# It may make sense to add comments on what this array is
+TAB: constant(decimal[10][11]) = [[1.0, 2.7182818285, 7.3890560989, 20.0855369232, 54.5981500331, 148.4131591026, 403.4287934927, 1096.6331584285, 2980.9579870417, 8103.0839275754],
     [1.0, 1.1051709181, 1.2214027582, 1.3498588076, 1.4918246976, 1.6487212707, 1.8221188004, 2.0137527075, 2.2255409285, 2.4596031112],
     [1.0, 1.0100501671, 1.02020134, 1.030454534, 1.0408107742, 1.0512710964, 1.0618365465, 1.0725081813, 1.0832870677, 1.0941742837],
     [1.0, 1.0010005002, 1.0020020013, 1.0030045045, 1.0040080107, 1.0050125209, 1.0060180361, 1.0070245573, 1.0080320855, 1.0090406218],
@@ -24,41 +26,49 @@ tab: constant(decimal[10][11]) = [[1.0, 2.7182818285, 7.3890560989, 20.085536923
 
 @external
 def __init__():
-    self.owner = msg.sender
+    """
+    @notice example natspec for a function
+    """
+    self.s_owner = msg.sender
+
+@external
+def ask(x: decimal) -> decimal:
+    assert msg.sender != self.s_owner, "The owner cannot call this function."
+    assert x >= 0.0, "Negative powers are not supported."
+    assert x < 10.0, "The power limit is 9.999999999"
+
+    y: decimal = self._e_to_the(x)
+    log lookup(msg.sender, x, y)
+    return y
+
+@external
+def change_owner(new_owner: address):
+    assert msg.sender == self.s_owner, "Only the owner can change the owner."
+    assert new_owner != empty(address), "The new owner cannot be the zero address."
+    assert new_owner != self.s_owner, "The new owner cannot be the same as the old owner."
+    self.s_owner = new_owner
+
+@external
+def unalive():
+    assert msg.sender == self.s_owner, "Only the owner can unalive the contract."
+    selfdestruct(self.s_owner)
+
+@external
+@view
+def get_owner() -> address:
+    return self.s_owner
 
 @internal
 @pure
-def e_to_the(_x: decimal) -> decimal:
+def _e_to_the(_x: decimal) -> decimal:
     x: decimal = _x
     y: decimal = 1.0
     for i in range(11):
         if x != 0.0:
             d: uint256 = convert(x, uint256)
-            y *= tab[i][d]
+            y *= TAB[i][d]
             x -= convert(d, decimal)
             x *= 10.0
         else:
             break
     return y
-
-@external
-def ask(x: decimal) -> decimal:
-    assert msg.sender != self.owner, "The owner cannot call this function."
-    assert x >= 0.0, "Negative powers are not supported."
-    assert x < 10.0, "The power limit is 9.999999999"
-
-    y: decimal = self.e_to_the(x)
-    log lookup(msg.sender, x, y)
-    return y
-
-@external
-def change_owner(a: address):
-    assert msg.sender == self.owner, "Only the owner can change the owner."
-    assert a != empty(address), "The new owner cannot be the zero address."
-    assert a != self.owner, "The new owner cannot be the same as the old owner."
-    self.owner = a
-
-@external
-def unalive():
-    assert msg.sender == self.owner, "Only the owner can unalive the contract."
-    selfdestruct(self.owner)
